@@ -1,0 +1,86 @@
+<html>
+	<head>
+		<script>
+			var booksRequest, bookDetailRequest, addBookRequest;
+			
+			function init(){
+				loadBooks();
+				
+				var form = document.getElementById("form");
+				form.addEventListener("submit", addNewBook);
+			}
+			
+			function loadBooks(){
+				booksRequest = new XMLHttpRequest();
+				booksRequest.addEventListener("load", showAllBooks);
+				booksRequest.open("GET", "http://localhost:3333/allbooks");
+				booksRequest.send();	
+			}
+			
+			function showAllBooks(evt){
+				var listData = JSON.parse(booksRequest.responseText);
+				var ul = document.getElementById("booksList");
+				ul.innerHTML = "";
+				listData.forEach(function(value){
+					var li = document.createElement("li");
+					li.innerHTML = value.title;
+					li.id = value._id;
+					li.addEventListener("click", loadBookDetails);
+					ul.appendChild(li);
+				})
+			}
+			
+			function loadBookDetails(evt){
+				bookDetailRequest = new XMLHttpRequest();
+				bookDetailRequest.addEventListener("load", showBookDetails);
+				bookDetailRequest.open("GET", "http://localhost:3333/bookdetails/" + evt.target.id);
+				bookDetailRequest.send();
+			}
+			
+			function showBookDetails(evt){
+				var details = JSON.parse(bookDetailRequest.responseText);
+				var div = document.getElementById("bookDetails");
+				div.innerHTML = "<h2>" + details.title + "</h2><p>" + details.author + "<br/>" + details.category +"</p><p>total pages: " + details.pages + "</p>"; 
+			}
+			
+			function addNewBook(evt){
+				evt.preventDefault();
+				
+				var title = document.getElementById("title").value;
+				var author = document.getElementById("author").value;
+				var category = document.getElementById("category").value;
+				var pages = document.getElementById("pages").value;
+				
+				addBookRequest = new XMLHttpRequest();
+				addBookRequest.open("POST", "http://localhost:3333/addbook", true);
+				addBookRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+				addBookRequest.onreadystatechange = handleAddBookResult;
+				addBookRequest.send("title=" + title + "&author=" + author + "&category=" + category + "&pages=" + pages);
+				
+			}
+			
+			function handleAddBookResult(evt){
+				if (addBookRequest.readyState == 4) { 
+					if (addBookRequest.status == 200) { 
+						console.log(addBookRequest.responseText);		
+						loadBooks();
+					}
+				} 
+				
+			}
+		</script>
+	</head>
+	<body onload="init()" style="padding-left:15px;font-family:Arial,sans">
+		<div>
+			<ul id="booksList" style="float:left;padding:10px;width:300px"></ul>
+			<div id="bookDetails" style="float:left;padding:10px;width:300px;"></div>
+			<form id="form" style="float:left;padding:10px;width:400px">
+				Title: <input id="title" type="text" name="title">
+				Author: <input id="author" type="text" name="author">
+				Category: <input id="category" type="text" name="category">
+				Pages: <input id="pages" type="text" name="pages">
+				<input type="submit">
+  			</form>
+		</div>
+	</body>
+</html>

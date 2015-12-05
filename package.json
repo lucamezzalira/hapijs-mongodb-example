@@ -1,0 +1,18 @@
+{
+  "name": "hapijs-mongodb",
+  "version": "1.0.0",
+  "description": "example of how to integrate hapijs with mongoDB",
+  "main": "src/index.js",
+  "scripts": {
+    "demon": "nodemon src/index.js --harmony",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "luca mezzalira <mezzalab@gmail.com> (http://lucamezzalira.com)",
+  "license": "ISC",
+  "dependencies": {
+    "boom": "^3.0.0",
+    "hapi": "^11.1.2",
+    "hapi-mongodb": "^4.1.0",
+    "joi": "^7.0.1"
+  }
+}
